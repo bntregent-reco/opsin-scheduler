@@ -72,6 +72,12 @@ def resize_crop(img: Image.Image, size: tuple) -> Image.Image:
 
 
 def get_font(size: int, bold: bool = True) -> ImageFont.FreeTypeFont:
+    bundled = os.path.join(os.path.dirname(__file__), "Oswald-Bold.ttf")
+    if os.path.exists(bundled):
+        try:
+            return ImageFont.truetype(bundled, size)
+        except Exception:
+            pass
     # Prefer Impact-style condensed bold fonts that match packaging
     candidates = (
         [
