@@ -295,18 +295,18 @@ def make_cta_slide(text: str, bg_image: Image.Image | None = None) -> Image.Imag
             draw.text((bx, badge_y - 10), lines[1], font=f_lbl, fill=EMERALD, anchor="mm")
         draw.text((bx, badge_y + 38), price, font=f_price, fill=EMERALD, anchor="mm")
 
-    # ── TikTok Shop CTA ──
+    # ── Quiz CTA ──
     f_shop = get_font(44)
-    draw.text((W // 2, badge_y + 130), "🛍 TAP THE BAG TO ORDER",
+    draw.text((W // 2, badge_y + 130), "👉 TAKE THE TEST",
               font=f_shop, fill=GOLD, anchor="mm")
     f_link = get_font(32, bold=False)
-    draw.text((W // 2, badge_y + 190), "Fulfilled by Amazon · Ships fast",
+    draw.text((W // 2, badge_y + 190), "getopsin.com/gross",
               font=f_link, fill=WHITE, anchor="mm")
 
     # ── Bottom bar ──
     divider(draw, H - 90, GOLD, 4)
     f_foot = get_font(34)
-    draw.text((W // 2, H - 65), "OPSIN™ · TIKTOK SHOP",
+    draw.text((W // 2, H - 65), "OPSIN™ · YOUR PHONE IS GROSS™",
               font=f_foot, fill=GOLD, anchor="mm")
 
     # ── Progress bar (last slide = filled) ──
@@ -316,6 +316,18 @@ def make_cta_slide(text: str, bg_image: Image.Image | None = None) -> Image.Imag
 
 
 # ─── BUILD ───────────────────────────────────────────────────────────────────
+PRODUCT_IMAGE_URL = "https://getopsin.com/frontlargecolors.jpg"
+
+def _fetch_product_image() -> Image.Image | None:
+    try:
+        r = requests.get(PRODUCT_IMAGE_URL, timeout=8)
+        if r.status_code == 200:
+            return Image.open(io.BytesIO(r.content)).convert("RGB")
+    except Exception:
+        pass
+    return None
+
+
 def build_slideshow_images(content: dict, images: list) -> list[Image.Image]:
     slides = []
     total = len(content["slides"])
@@ -327,7 +339,8 @@ def build_slideshow_images(content: dict, images: list) -> list[Image.Image]:
         slides.append(make_body_slide(
             slide["text"], slide.get("subtext", ""), i + 1, total, img(i + 1)
         ))
-    slides.append(make_cta_slide(content["cta"], img(total + 1)))
+    product_img = _fetch_product_image()
+    slides.append(make_cta_slide(content["cta"], product_img))
     return slides
 
 
